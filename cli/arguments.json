@@ -1,0 +1,32 @@
+{
+  "useCommand": true,
+  "defaultCommand": "development",
+  "commands": {
+    "development": {
+      "options": {
+        "development":{
+          "default": true
+        }
+      }
+    },
+    "production": {
+    }
+  },
+  "globalOptions": {
+    "port": {
+      "default": 8901,
+      "hasValue": true,
+      "type": "int",
+      "description": "Connector port"
+    },
+    "host": {
+      "default": "localhost",
+      "hasValue": true,
+      "description": "Connector host"
+    },
+    "development":{
+      "default": false,
+      "description": "Run server logic in development mode."
+    }
+  }
+}
