@@ -7,6 +7,9 @@
     "eslint": "node node_modules/eslint/bin/eslint .",
     "test": "node node_modules/eslint/bin/eslint ."
   },
+  "bin": {
+    "ucms": "bin/ucms.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ucms/ucms.git"
