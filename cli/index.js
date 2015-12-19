@@ -4,7 +4,7 @@
 
 import config from './arguments.json';
 import { parse } from 'cli-arguments';
-import { run } from 'ucms-core';
+import { startServer } from 'ucms-core';
 
 if (process.env.NODE_ENV === 'production') {
   config.defaultCommand = 'production';
@@ -29,7 +29,7 @@ if (doPiping()) {
   process.on('exit', () => {
     console.log('Bye.');
   });
-  run(options)
+  startServer(options)
     .catch(err => {
       console.error(err);
     });
