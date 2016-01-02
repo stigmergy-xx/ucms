@@ -48,7 +48,13 @@ async function loadPlugins() {
       if (typeof(func) === 'object' && typeof(func.default) === 'function') {
         func = func.default;
       }
-      await func(config[pluginName]);
+      if (typeof(func) !== 'function') {
+        continue;
+      }
+      const result = func(config[pluginName]);
+      if (typeof(result) === 'object' && typeof(result.then) === 'function') {
+        await result;
+      }
     }
   }
 }
