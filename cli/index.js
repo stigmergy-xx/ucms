@@ -2,15 +2,22 @@
  * Created by tdzl2_000 on 2015-12-18.
  */
 
-import config from './arguments.json';
 import { parse } from 'cli-arguments';
 import { startServer } from 'ucms-core';
+import * as path from 'path';
+import * as fs from 'fs';
 
-if (process.env.NODE_ENV === 'production') {
-  config.defaultCommand = 'production';
+function getOptions() {
+  const config = require('./arguments.json');
+  if (process.env.NODE_ENV === 'production') {
+    config.defaultCommand = 'production';
+  }
+
+  const { options } = parse(config);
+  return options;
 }
 
-const { options } = parse(config);
+const options = getOptions();
 
 global.__OPTIONS__ = options;
 global.__DEV__ = !options.production;
@@ -25,11 +32,30 @@ function doPiping() {
   return true;
 }
 
+async function loadPlugins() {
+  const configPath = path.join(__dirname, '../config.json');
+  if (!fs.existsSync(configPath)) {
+    // TODO: Load installation plugins.
+    console.log('No config.json found, enable installation plugin.');
+    return;
+  }
+  const config = JSON.parse(fs.readFileSync(configPath));
+  for (const pluginName in config) {
+    if ({}.hasOwnProperty.call(config, pluginName)) {
+      let func = require(pluginName);
+
+      // Support ES6 export default with babel.
+      if (typeof(func) === 'object' && typeof(func.default) === 'function') {
+        func = func.default;
+      }
+      await func(config[pluginName]);
+    }
+  }
+}
+
 if (doPiping()) {
-  process.on('exit', () => {
-    console.log('Bye.');
-  });
-  startServer(options)
+  loadPlugins()
+    .then(() => startServer(options.port, options.host))
     .catch(err => {
       console.error(err);
     });
