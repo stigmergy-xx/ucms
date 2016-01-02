@@ -63,6 +63,6 @@ if (doPiping()) {
   loadPlugins()
     .then(() => startServer(options.port, options.host))
     .catch(err => {
-      console.error(err);
+      console.error(err.stack);
     });
 }
