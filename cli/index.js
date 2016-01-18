@@ -2,25 +2,12 @@
  * Created by tdzl2_000 on 2015-12-18.
  */
 
-import { parse } from 'cli-arguments';
-import { startServer } from 'ucms-core';
+import { startServer, addFilter, PLUGINS } from 'ucms-core';
 import * as path from 'path';
 import * as fs from 'fs';
+import assert from 'assert';
 
-function getOptions() {
-  const config = require('./arguments.json');
-  if (process.env.NODE_ENV === 'production') {
-    config.defaultCommand = 'production';
-  }
-
-  const { options } = parse(config);
-  return options;
-}
-
-const options = getOptions();
-
-global.__OPTIONS__ = options;
-global.__DEV__ = !options.production;
+global.__DEV__ = process.env.NODE_ENV !== 'production';
 
 function doPiping() {
   if (__DEV__) {
@@ -32,37 +19,25 @@ function doPiping() {
   return true;
 }
 
-async function loadPlugins() {
+function loadPluginConfig() {
   const configPath = path.join(__dirname, '../config.json');
-  if (!fs.existsSync(configPath)) {
-    // TODO: Load installation plugins.
-    console.log('No config.json found, enable installation plugin.');
-    return;
-  }
-  const config = JSON.parse(fs.readFileSync(configPath));
-  for (const pluginName in config) {
-    if ({}.hasOwnProperty.call(config, pluginName)) {
-      let func = require(pluginName);
-
-      // Support ES6 export default with babel.
-      if (typeof(func) === 'object' && typeof(func.default) === 'function') {
-        func = func.default;
-      }
-      if (typeof(func) !== 'function') {
-        continue;
-      }
-      const result = func(config[pluginName]);
-      if (typeof(result) === 'object' && typeof(result.then) === 'function') {
-        await result;
-      }
-    }
+  if (fs.existsSync(configPath)) {
+    return JSON.parse(fs.readFileSync(configPath));
   }
 }
 
+async function main(){
+  const port = (process.env.UCMS_API_PORT | 0) || 8901;
+  const host = (process.env.UCMS_API_HOST | 0) || (__DEV__ ? 'localhost' : undefined);
+
+  addFilter(PLUGINS.LOAD_CONFIG, loadPluginConfig);
+  await startServer(port, host);
+}
+
+
 if (doPiping()) {
-  loadPlugins()
-    .then(() => startServer(options.port, options.host))
+  main()
     .catch(err => {
-      console.error(err.stack);
+      setTimeout(()=>{throw err;});
     });
 }
