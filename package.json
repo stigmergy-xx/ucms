@@ -32,9 +32,11 @@
     "babel-plugin-transform-es2015-modules-commonjs": "^6.3.16",
     "babel-register": "^6.3.13",
     "babel-runtime": "^6.3.19",
-    "koa": "^2.0.0-alpha.3",
-    "ucms-core": "^0.1.0",
-    "ucms-install": "^0.1.0"
+    "koa": "^2.0.0-alpha.3"
+  },
+  "peerDependencies": {
+    "ucms-install": "^0.1.0",
+    "ucms-core": "^0.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.6",
