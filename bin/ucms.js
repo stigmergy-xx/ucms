@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'production'){
     ignore: filename => {
       var dir = path.dirname(filename);
       for (; dir !== path.dirname(dir); dir = path.dirname(dir)) {
-        if (path.basename(dir) === 'node_modules') {
+        if (path.basename(dir) === 'node_modules' || path.basename(dir) === 'lib') {
           break;
         }
         if (fs.existsSync(path.join(dir, '.babelrc'))) {
