@@ -24,9 +24,12 @@ function doPiping() {
 }
 
 function loadPluginConfig() {
-  const configPath = process.env.UCMS_CONFIG || path.join(__dirname, '../config.json');
+  const configPath = path.resolve(process.env.UCMS_CONFIG || path.join(__dirname, '../config.json'));
   if (fs.existsSync(configPath)) {
-    return JSON.parse(fs.readFileSync(configPath));
+    const ret = JSON.parse(fs.readFileSync(configPath));
+    const dir = path.dirname(configPath);
+    ret.rootDir = ret.rootDir ? path.join(dir, ret.rootDir) : dir;
+    return ret;
   }
 }
 

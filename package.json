@@ -1,6 +1,6 @@
 {
   "name": "ucms",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Content Manager System powered by koa, designed for both web and app(react native). Startup script.",
   "main": "index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   "dependencies": {},
   "peerDependencies": {
     "ucms-install": "^0.1.1",
-    "ucms-core": "^0.1.1"
+    "ucms-core": "^0.1.3"
   },
   "devDependencies": {
     "babel-cli": "^6.5.1",
